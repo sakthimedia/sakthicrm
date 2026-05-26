@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakthi Info CRM</title>
+    <style>
+        /* Sakthi Info Premium Dark Theme */
+        :root {
+            --bg: #040a18;
+            --surface: #0a1329;
+            --primary: #00d2ff;
+            --primary-hover: #00a8cc;
+            --text: #ffffff;
+            --text-muted: #94a3b8;
+            --border: #1e2d4a;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { 
+            background: var(--surface); 
+            padding: 25px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+            margin-bottom: 25px; 
+        }
+        
+        h1, h2, h3, h4 { margin-bottom: 15px; color: var(--primary); font-weight: 600; letter-spacing: 0.5px; }
+        .flex { display: flex; gap: 15px; flex-wrap: wrap; }
+        .justify-between { justify-content: space-between; align-items: center; }
+        
+        button { 
+            background: var(--primary); 
+            color: #000; 
+            border: none; 
+            padding: 12px 18px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: all 0.3s ease; 
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3); }
+        button.dark { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+        button.dark:hover { background: rgba(0, 210, 255, 0.1); }
+        button.danger { background: var(--danger); color: white; border: none; }
+        button.danger:hover { background: var(--danger-hover); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        
+        input, select, textarea { 
+            background: #0d1a36; 
+            color: var(--text); 
+            padding: 12px; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            width: 100%; 
+            margin-bottom: 15px; 
+            font-family: inherit;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        input[type="file"] { padding: 9px; }
+        .form-group { flex: 1; min-width: 250px; }
+        label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
+        th, td { text-align: left; padding: 15px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background: #081126; font-weight: 600; color: var(--primary); text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; }
+        
+        .hidden { display: none !important; }
+        .badge { background: rgba(0, 210, 255, 0.1); color: var(--primary); padding: 5px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; border: 1px solid rgba(0, 210, 255, 0.2); }
+        
+        /* Package Grid */
+        .package-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .package-card { background: #081126; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; position: relative; }
+        .package-img { width: 100%; height: 120px; object-fit: cover; background: #0d1a36; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.8em;}
+        .package-details { padding: 10px; }
+        .package-price { color: #16a34a; font-weight: bold; margin-top: 5px; }
+        
+        /* Login Screen Specifics */
+        #auth-screen { max-width: 450px; margin: 8vh auto; text-align: center; padding: 40px; }
+        .login-logo { max-width: 100%; height: auto; margin-bottom: 30px; filter: drop-shadow(0 0 10px rgba(0,210,255,0.2)); }
+        .auth-link { color: var(--primary); cursor: pointer; font-size: 0.9em; margin-top: 15px; display: inline-block; text-decoration: underline; }
+        .auth-link:hover { color: var(--primary-hover); }
+        
+        /* Invoice Print Styles */
+        #invoice-view { padding: 40px; max-width: 900px; margin: 0 auto; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 20px; }
+        .invoice-logo { max-height: 80px; }
+        
+        @media print {
+            body { background: white !important; padding: 0; color: black !important; }
+            body * { visibility: hidden; }
+            #invoice-view, #invoice-view * { visibility: visible; color: black !important; background: white !important; }
+            #invoice-view { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+            th { border-bottom: 2px solid black !important; color: black !important; }
+            td { border-bottom: 1px solid #ccc !important; }
+            .invoice-header { border-bottom: 2px solid black !important; }
+            .invoice-logo { filter: drop-shadow(0 0 0 transparent); } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="auth-screen" class="card">
+        <img src="logo.png" alt="Sakthi Info Logo" class="login-logo" onerror="this.style.display='none'; document.getElementById('login-fallback-text').style.display='block';">
+        <h2 id="login-fallback-text" style="display: none; letter-spacing: 2px;">SAKTHINFO</h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1px; font-size: 0.9em;">INNOVATE • BUILD • EMPOWER</p>
+        
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <input type="text" id="login-user" required placeholder="Username" autocomplete="username">
+            <input type="password" id="login-pass" required placeholder="Password" autocomplete="current-password">
+            <button type="submit" style="width: 100%; font-size: 1.1em;">Secure Login</button>
+            <span class="auth-link" onclick="toggleAuthMode()">New here? Create an account</span>
+        </form>
+
+        <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
+            <input type="text" id="reg-user" required placeholder="Choose a Username" autocomplete="username">
+            <input type="password" id="reg-pass" required placeholder="Create a Password" autocomplete="new-password">
+            <select id="reg-role" required>
+                <option value="staff">Role: Staff Member</option>
+                <option value="admin">Role: Administrator</option>
+            </select>
+            <button type="submit" style="width: 100%; font-size: 1.1em; background: #16a34a; color: white;">Register Account</button>
+            <span class="auth-link" onclick="toggleAuthMode()">Already have an account? Login</span>
+        </form>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <span style="color: var(--danger); font-size: 0.8em; cursor: pointer; text-decoration: underline;" onclick="factoryReset()">⚠️ Glitch? Factory Reset Database</span>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        <div class="card flex justify-between" style="padding: 15px 25px; margin-bottom: 25px; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="logo.png" alt="Logo" style="max-height: 40px;" onerror="this.style.display='none'">
+                <h2 style="margin: 0;">Workspace <span id="role-badge" class="badge" style="margin-left: 10px;"></span></h2>
+            </div>
+            <button onclick="logout()" class="dark" style="width: auto; padding: 8px 15px;">Logout</button>
+        </div>
+
+        <div id="admin-control-panel" class="hidden">
+            <div class="flex">
+                <div class="card" style="flex: 1; min-width: 300px;">
+                    <h3>👑 Manage Users</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">Review and manage registered accounts.</p>
+                    <div style="display: flex; gap: 10px; flex-direction: column;" id="user-list-container">
+                        </div>
+                </div>
+
+                <div class="card" style="flex: 2; min-width: 300px;">
+                    <h3>📦 Custom Packages & Items</h3>
+                    <form id="add-package-form" class="flex" onsubmit="addPackage(event)" style="align-items: flex-end;">
+                        <div class="form-group">
+                            <label>Package/Item Name</label>
+                            <input type="text" id="pkg-name" required placeholder="e.g. Premium Branding">
+                        </div>
+                        <div class="form-group">
+                            <label>Default Price (₹)</label>
+                            <input type="number" id="pkg-price" required placeholder="5000">
+                        </div>
+                        <div class="form-group">
+                            <label>Item Image (Optional)</label>
+                            <input type="file" id="pkg-image" accept="image/*">
+                        </div>
+                        <div class="form-group" style="flex: 0;">
+                            <button type="submit" class="dark">➕ Create</button>
+                        </div>
+                    </form>
+                    <div id="package-grid" class="package-grid">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Add New Client Record</h3>
+            <form id="add-client-form" onsubmit="addClient(event)">
+                <div class="flex">
+                    <div class="form-group">
+                        <label>Business / Company Name</label>
+                        <input type="text" id="client-business" required placeholder="e.g. Darshini Luxury Party Hall">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Person</label>
+                        <input type="text" id="client-name" required placeholder="Enter client name">
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="client-mobile" placeholder="e.g. 9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>Email ID</label>
+                        <input type="email" id="client-email" placeholder="client@example.com">
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="form-group">
+                        <label>Service Category</label>
+                        <select id="client-category" required>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Branding & Video">Branding & Video</option>
+                            <option value="Custom Item">Custom Item</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Package / Item</label>
+                        <select id="client-package" required onchange="autoFillPrice()">
+                            <option value="">-- Select Package --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Final Amount (₹)</label>
+                        <input type="number" id="client-amount" required placeholder="e.g. 5000" min="0">
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="form-group">
+                        <label>Business Address</label>
+                        <textarea id="client-address" rows="2" placeholder="Full address of the client"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Staff Report / Work Description</label>
+                        <textarea id="client-description" rows="2" placeholder="Describe the requirements, timelines..."></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" style="width: 100%; margin-top: 10px; font-size: 1.1em;">💾 Save Client Record</button>
+            </form>
+        </div>
+
+        <div class="card" style="overflow-x: auto;">
+            <div class="flex justify-between" style="margin-bottom: 15px;">
+                <h3 style="margin: 0;">Client Database <span style="font-size: 0.7em; color: var(--primary); font-weight: normal; margin-left: 10px;">(Auto-syncing 🔄)</span></h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Business & Contact Info</th>
+                        <th>Item/Package</th>
+                        <th>Amount</th>
+                        <th>Handled By</th>
+                        <th id="action-header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="client-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="invoice-view" class="card hidden">
+        <div class="no-print" style="margin-bottom: 30px;">
+            <button onclick="closeInvoice()" class="dark" style="width: auto;">🔙 Back</button>
+            <button onclick="window.print()" style="float: right; width: auto;">🖨️ Print / PDF</button>
+        </div>
+        
+        <div class="invoice-header">
+            <div>
+                <img src="logo.png" alt="Sakthi Info" class="invoice-logo" onerror="this.style.display='none'; document.getElementById('alt-logo-text').style.display='block';">
+                <h1 id="alt-logo-text" style="display: none; margin: 0; color: var(--primary);">SAKTHINFO</h1>
+                <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 5px; letter-spacing: 1px;">INNOVATE • BUILD • EMPOWER</p>
+            </div>
+            <div style="text-align: right; color: var(--text-muted); font-size: 0.95em; line-height: 1.5;">
+                <strong style="color: var(--text);">Sakthi Info</strong><br>
+                Digital Marketing & Web Development<br>
+                Phone: 90429 70445
+            </div>
+        </div>
+
+        <h2 style="text-align: center; letter-spacing: 3px; color: var(--primary); margin-bottom: 30px; margin-top: 20px;">TAX INVOICE</h2>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 40px; font-size: 1.05em; line-height: 1.6;">
+            <div>
+                <h4 style="color: var(--text-muted); margin-bottom: 5px;">BILLED TO:</h4>
+                <p><strong><span id="inv-business" style="font-size: 1.2em; color: var(--primary);"></span></strong></p>
+                <p>Attn: <span id="inv-name"></span></p>
+                <p style="color: var(--text-muted); font-size: 0.9em;">📞 <span id="inv-mobile"></span></p>
+                <p style="color: var(--text-muted); font-size: 0.9em;">✉️ <span id="inv-email"></span></p>
+                <p style="white-space: pre-wrap; max-width: 300px; color: var(--text-muted); margin-top: 5px;" id="inv-address"></p>
+            </div>
+            <div style="text-align: right;">
+                <p><strong>Invoice Date:</strong> <span id="inv-date"></span></p>
+                <p><strong>Handled By:</strong> <span id="inv-staff"></span></p>
+            </div>
+        </div>
+
+        <table style="margin-top: 20px; border: 1px solid var(--border);">
+            <tr style="background: var(--surface);">
+                <th>Service / Item Description</th>
+                <th>Category</th>
+                <th style="text-align: right;">Amount</th>
+            </tr>
+            <tr>
+                <td style="padding: 20px 15px;">
+                    <strong style="font-size: 1.1em;"><span id="inv-package"></span></strong>
+                    <p style="margin-top: 10px; color: var(--text-muted); font-size: 0.9em; white-space: pre-wrap;" id="inv-desc"></p>
+                </td>
+                <td style="padding: 20px 15px; vertical-align: top;"><span id="inv-category"></span></td>
+                <td style="text-align: right; padding: 20px 15px; font-weight: bold; font-size: 1.3em; color: var(--primary); vertical-align: top;">
+                    ₹<span id="inv-amount"></span>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="margin-top: 60px; border-top: 1px solid var(--border); padding-top: 20px; text-align: center; color: var(--text-muted); font-size: 0.9em;">
+            <p>Thank you for choosing Sakthi Info!</p>
+            <p style="margin-top: 5px;">Mobile-Responsive Design | SEO Ready | Cinematic Edits | Brand Identity</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Safe Storage Parsing ---
+    function safeGetJSON(key, fallback) {
+        try {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : fallback;
+        } catch (e) {
+            console.error("Corrupted DB data found for", key);
+            return fallback;
+        }
+    }
+
+    // --- State Variables ---
+    let currentUser = null;
+    let currentRole = null;
+    let isAdmin = false;
+    let refreshInterval = null;
+
+    // --- Core View Toggles ---
+    const show = (id) => document.getElementById(id).classList.remove('hidden');
+    const hide = (id) => document.getElementById(id).classList.add('hidden');
+
+    window.onload = () => {
+        ensureDefaultPackages();
+        // Create default admin if DB is completely empty
+        if (getUsers().length === 0) {
+            const defaultUsers = [{ username: 'admin', password: 'password', role: 'admin' }];
+            localStorage.setItem('sakthi_users', JSON.stringify(defaultUsers));
+        }
+    };
+
+    // --- Emergency Reset ---
+    function factoryReset() {
+        if(confirm("CRITICAL WARNING: This will delete ALL clients, users, and packages forever. Only do this if the system is completely broken. Are you sure you want to proceed?")) {
+            localStorage.clear();
+            alert("System reset successful. Reloading...");
+            location.reload();
+        }
+    }
+
+    // --- Authentication & User Management ---
+    function getUsers() { return safeGetJSON('sakthi_users', []); }
+
+    function toggleAuthMode() {
+        const loginForm = document.getElementById('login-form');
+        if(loginForm.classList.contains('hidden')) {
+            show('login-form'); hide('register-form');
+        } else {
+            hide('login-form'); show('register-form');
+        }
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const username = document.getElementById('reg-user').value.trim();
+        const password = document.getElementById('reg-pass').value.trim();
+        const role = document.getElementById('reg-role').value;
+
+        let users = getUsers();
+        if(users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+            alert("Username already exists. Please choose another.");
+            return;
+        }
+
+        users.push({ username, password, role });
+        localStorage.setItem('sakthi_users', JSON.stringify(users));
+        
+        alert("Registration successful! You can now log in.");
+        document.getElementById('register-form').reset();
+        toggleAuthMode();
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('login-user').value.trim();
+        const password = document.getElementById('login-pass').value.trim();
+        
+        const users = getUsers();
+        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+        
+        if (user) {
+            executeLogin(user.username, user.role);
+            document.getElementById('login-form').reset();
+        } else {
+            alert("Invalid username or password.");
+        }
+    }
+
+    function executeLogin(username, role) {
+        currentUser = username;
+        currentRole = role;
+        isAdmin = (role === 'admin');
+
+        hide('auth-screen'); 
+        show('dashboard');
+        
+        document.getElementById('role-badge').innerText = `${currentUser} (${role.toUpperCase()})`;
+
+        if(isAdmin) {
+            show('admin-control-panel');
+            renderUserList();
+            renderPackages();
+            document.getElementById('action-header').style.display = 'table-cell';
+        } else {
+            hide('admin-control-panel');
+            document.getElementById('action-header').style.display = 'none';
+        }
+
+        updateClientPackageDropdown();
+        loadClients();
+        
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(loadClients, 2000);
+    }
+
+    function logout() {
+        currentUser = null; currentRole = null; isAdmin = false; 
+        if (refreshInterval) clearInterval(refreshInterval);
+        hide('dashboard'); hide('invoice-view'); hide('admin-control-panel'); 
+        show('auth-screen'); show('login-form'); hide('register-form');
+    }
+
+    function deleteUser(username) {
+        if(!isAdmin) return;
+        if(username === currentUser) {
+            alert("You cannot delete your own active account.");
+            return;
+        }
+        if(confirm(`Are you sure you want to delete user '${username}'?`)) {
+            let users = getUsers().filter(u => u.username !== username);
+            localStorage.setItem('sakthi_users', JSON.stringify(users));
+            renderUserList();
+        }
+    }
+
+    function renderUserList() {
+        const container = document.getElementById('user-list-container');
+        const users = getUsers();
+        container.innerHTML = users.map(u => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #0d1a36; padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                <div><strong>${u.username}</strong> <span class="badge" style="margin-left:10px;">${u.role}</span></div>
+                ${u.username !== currentUser ? `<button class="danger" onclick="deleteUser('${u.username}')" style="padding: 5px 10px; font-size: 0.8em;">Delete</button>` : `<span style="color:var(--text-muted); font-size:0.8em;">(You)</span>`}
+            </div>
+        `).join('');
+    }
+
+    // --- Package Management ---
+    function getPackages() { return safeGetJSON('sakthi_custom_packages', []); }
+
+    function ensureDefaultPackages() {
+        if(!localStorage.getItem('sakthi_custom_packages')) {
+            const defaults = [
+                { id: '1', name: 'Basic Website', price: 10000, img: null },
+                { id: '2', name: 'Premium SEO Website', price: 25000, img: null },
+                { id: '3', name: 'Insta Reel Edit', price: 1500, img: null },
+                { id: '4', name: 'Logo Design', price: 3000, img: null }
+            ];
+            localStorage.setItem('sakthi_custom_packages', JSON.stringify(defaults));
+        }
+    }
+
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scaleSize = 300 / img.width;
+                canvas.width = 300;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.7)); 
+            };
+        };
+    }
+
+    function addPackage(e) {
+        e.preventDefault();
+        if (!isAdmin) { alert("Access Denied."); return; }
+
+        const name = document.getElementById('pkg-name').value;
+        const price = document.getElementById('pkg-price').value;
+        const fileInput = document.getElementById('pkg-image');
+        
+        const saveToDb = (imageBase64) => {
+            const pkgs = getPackages();
+            pkgs.push({ id: Date.now().toString(), name, price, img: imageBase64 });
+            localStorage.setItem('sakthi_custom_packages', JSON.stringify(pkgs));
+            document.getElementById('add-package-form').reset();
+            renderPackages();
+            updateClientPackageDropdown();
+        };
+
+        if (fileInput.files && fileInput.files[0]) {
+            compressImage(fileInput.files[0], saveToDb);
+        } else {
+            saveToDb(null); 
+        }
+    }
+
+    function deletePackage(id) {
+        if (!isAdmin) return;
+        if(confirm('Delete this package?')) {
+            const pkgs = getPackages().filter(p => p.id !== id);
+            localStorage.setItem('sakthi_custom_packages', JSON.stringify(pkgs));
+            renderPackages();
+            updateClientPackageDropdown();
+        }
+    }
+
+    function renderPackages() {
+        const container = document.getElementById('package-grid');
+        const pkgs = getPackages();
+        container.innerHTML = pkgs.map(p => `
+            <div class="package-card">
+                ${p.img ? `<img src="${p.img}" class="package-img">` : `<div class="package-img">No Image</div>`}
+                <div class="package-details">
+                    <h4 style="margin:0; font-size:1em; color:var(--text);">${p.name}</h4>
+                    <div class="package-price">₹${p.price}</div>
+                    <button class="danger" onclick="deletePackage('${p.id}')" style="width:100%; padding: 5px; margin-top:10px; font-size: 0.8em;">🗑️ Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateClientPackageDropdown() {
+        const select = document.getElementById('client-package');
+        const pkgs = getPackages();
+        select.innerHTML = '<option value="">-- Select Package --</option>' + 
+                           pkgs.map(p => `<option value="${p.name}" data-price="${p.price}">${p.name}</option>`).join('');
+    }
+
+    function autoFillPrice() {
+        const select = document.getElementById('client-package');
+        const selectedOption = select.options[select.selectedIndex];
+        if(selectedOption && selectedOption.dataset.price) {
+            document.getElementById('client-amount').value = selectedOption.dataset.price;
+        }
+    }
+
+    // --- Client Database ---
+    function getClients() { return safeGetJSON('sakthi_clients_v2', []); }
+    
+    function addClient(e) {
+        e.preventDefault();
+        const clients = getClients();
+        const selectedPkgName = document.getElementById('client-package').value;
+        const matchedPackage = getPackages().find(p => p.name === selectedPkgName);
+        
+        clients.push({
+            id: Date.now().toString(),
+            date: new Date().toLocaleDateString(),
+            business: document.getElementById('client-business').value,
+            name: document.getElementById('client-name').value,
+            mobile: document.getElementById('client-mobile').value, // NEW Field saved
+            email: document.getElementById('client-email').value, // NEW Field saved
+            category: document.getElementById('client-category').value,
+            package: selectedPkgName || 'Custom Service',
+            amount: document.getElementById('client-amount').value,
+            address: document.getElementById('client-address').value,
+            description: document.getElementById('client-description').value,
+            pkgImage: matchedPackage ? matchedPackage.img : null, 
+            addedBy: currentUser
+        });
+        
+        localStorage.setItem('sakthi_clients_v2', JSON.stringify(clients));
+        document.getElementById('add-client-form').reset();
+        loadClients();
+    }
+
+    function deleteClient(id) {
+        if(!isAdmin) { alert("Access Denied: Only Admins can delete records."); return; }
+        if(confirm('Delete client record?')) {
+            const filteredClients = getClients().filter(c => c.id !== id);
+            localStorage.setItem('sakthi_clients_v2', JSON.stringify(filteredClients));
+            loadClients();
+        }
+    }
+
+    // --- UI Rendering ---
+    function loadClients() {
+        const tbody = document.getElementById('client-table-body');
+        const clients = getClients();
+        
+        let newHTML = clients.reverse().map(client => {
+            const amount = client.amount ? `₹${parseFloat(client.amount).toLocaleString()}` : '-';
+            const imgHTML = client.pkgImage ? `<br><img src="${client.pkgImage}" style="max-height: 40px; border-radius: 4px; margin-top: 5px;">` : '';
+            
+            // Format contact details for table
+            const mobileText = client.mobile ? `📞 ${client.mobile}` : '';
+            const emailText = client.email ? `✉️ ${client.email}` : '';
+            const contactBlock = `<br><small style="color: var(--text-muted);">👤 ${client.name || '-'}</small><br><small style="color: var(--text-muted);">${mobileText}</small><br><small style="color: var(--text-muted);">${emailText}</small>`;
+
+            // Handle actions visibility securely
+            let actionStyle = isAdmin ? '' : 'display: none;';
+            let actionButtons = isAdmin ? `
+                <td class="flex" style="gap: 5px; ${actionStyle}">
+                    <button class="dark" onclick="generateInvoice('${client.id}')" style="padding: 6px 12px; font-size: 0.85em;">🧾 Invoice</button>
+                    <button class="danger" onclick="deleteClient('${client.id}')" style="padding: 6px 12px; font-size: 0.85em;">🗑️</button>
+                </td>` : `<td style="${actionStyle}"></td>`;
+
+            return `<tr>
+                <td>${client.date}</td>
+                <td><strong style="color: var(--text);">${client.business || '-'}</strong>${contactBlock}</td>
+                <td><span class="badge">${client.category || '-'}</span><br><strong>${client.package || '-'}</strong>${imgHTML}</td>
+                <td style="font-weight: bold; color: var(--primary);">${amount}</td>
+                <td><span class="staff-badge">${client.addedBy || 'Unknown'}</span></td>
+                ${actionButtons}
+            </tr>`;
+        }).join('');
+        
+        if (clients.length === 0) {
+            newHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 30px;">No client records found.</td></tr>`;
+        }
+        
+        if(tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
+    }
+
+    // --- Invoice Logic ---
+    function generateInvoice(id) {
+        const client = getClients().find(c => c.id === id);
+        if(!client) return;
+        
+        hide('dashboard'); show('invoice-view');
+
+        document.getElementById('inv-date').innerText = client.date;
+        document.getElementById('inv-business').innerText = client.business;
+        document.getElementById('inv-name').innerText = client.name;
+        
+        // Populate new contact fields, fallback to '-' if missing on old records
+        document.getElementById('inv-mobile').innerText = client.mobile || '-';
+        document.getElementById('inv-email').innerText = client.email || '-';
+
+        document.getElementById('inv-address').innerText = client.address || 'Address not provided';
+        document.getElementById('inv-staff').innerText = client.addedBy;
+        document.getElementById('inv-category').innerText = client.category;
+        document.getElementById('inv-package').innerText = client.package;
+        document.getElementById('inv-desc').innerText = client.description ? `Details: ${client.description}` : 'Standard service execution.';
+        document.getElementById('inv-amount').innerText = client.amount ? parseFloat(client.amount).toLocaleString() : '0.00';
+    }
+    
+    function closeInvoice() { hide('invoice-view'); show('dashboard'); }
+</script>
+</body>
+</html>
